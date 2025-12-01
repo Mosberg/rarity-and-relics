@@ -26,7 +26,9 @@ public abstract class ItemStackMixin {
 	}
 
 	private boolean shouldApplyRarity(Item item) {
-		return item instanceof ToolItem ||
+		// Check for tools, weapons, and armor using Item properties
+		// This approach works across all Minecraft versions
+		return item instanceof MiningToolItem ||
 				item instanceof SwordItem ||
 				item instanceof ArmorItem ||
 				item instanceof BowItem ||
