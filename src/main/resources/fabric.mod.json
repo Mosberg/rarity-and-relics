@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "rarity-and-relics",
+  "version": "${version}",
+  "name": "Rarity and Relics",
+  "description": "Gear up, take risks, and uncover legendary treasures in every adventure!",
+  "authors": [
+    "Mosberg"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Mosberg/rarity-and-relics",
+    "sources": "https://github.com/Mosberg/rarity-and-relics"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/rarity-and-relics/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mosberg.RarityAndRelics"
+    ],
+    "client": [
+      "com.mosberg.RarityAndRelicsClient"
+    ]
+  },
+  "mixins": [
+    "rarity-and-relics.mixins.json",
+    {
+      "config": "rarity-and-relics.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+  }
+}
