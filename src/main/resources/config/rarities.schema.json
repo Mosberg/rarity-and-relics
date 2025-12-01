@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mosberg.github.io/src/schemas/rarities.schema.json",
+  "title": "Rarities Schema",
+  "description": "Schema for defining item rarities, their attributes, and drop rates.",
+  "type": "object",
+  "properties": {
+    "$id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "rarities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "color", "description", "assets", "dropRates"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Unique identifier for the rarity tier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name shown to players"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$",
+            "description": "Hex color code for item names (#RRGGBB or #RRGGBBAA)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Flavor text describing the rarity tier"
+          },
+          "assets": {
+            "type": "object",
+            "required": ["icon", "frame"],
+            "properties": {
+              "icon": {
+                "type": "string",
+                "pattern": "^rarity:icons/[a-zA-Z0-9_-]+$",
+                "description": "Resource path for rarity icon"
+              },
+              "frame": {
+                "type": "string",
+                "pattern": "^rarity:frames/[a-zA-Z0-9_-]+$",
+                "description": "Resource path for item frame decoration"
+              }
+            },
+            "description": "Visual asset references for the rarity"
+          },
+          "dropRates": {
+            "type": "object",
+            "required": ["crafting", "drop", "loot"],
+            "properties": {
+              "crafting": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Weight for crafting table drops"
+              },
+              "drop": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Weight for mob kill drops"
+              },
+              "loot": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Weight for chest/structure loot"
+              }
+            },
+            "description": "Drop rate weights for different sources"
+          }
+        }
+      }
+    }
+  },
+  "required": ["$id", "rarities"]
+}
