@@ -2,7 +2,6 @@ package com.mosberg.mixin;
 
 import com.mosberg.component.ModDataComponents;
 import com.mosberg.rarity.RarityManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.CraftingScreenHandler;
@@ -24,7 +23,8 @@ public abstract class CraftingScreenHandlerMixin extends ScreenHandler {
 		if (inventory instanceof CraftingResultInventory) {
 			ItemStack result = inventory.getStack(0);
 			if (!result.isEmpty() && !result.contains(ModDataComponents.RARITY_DATA)) {
-				var rarityData = RarityManager.generateRarityData();
+				// Use CRAFTING source type for crafted items
+				var rarityData = RarityManager.generateRarityData(RarityManager.SourceType.CRAFTING);
 				if (rarityData != null) {
 					result.set(ModDataComponents.RARITY_DATA, rarityData);
 				}

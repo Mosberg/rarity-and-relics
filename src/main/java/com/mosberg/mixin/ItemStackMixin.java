@@ -4,7 +4,6 @@ import com.mosberg.component.ModDataComponents;
 import com.mosberg.rarity.RarityManager;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +17,8 @@ public abstract class ItemStackMixin {
 
 		// Only apply rarity to tools, weapons, and armor
 		if (shouldApplyRarity(item) && !stack.contains(ModDataComponents.RARITY_DATA)) {
-			var rarityData = RarityManager.generateRarityData();
+			// Default to LOOT source type for general item creation
+			var rarityData = RarityManager.generateRarityData(RarityManager.SourceType.LOOT);
 			if (rarityData != null) {
 				stack.set(ModDataComponents.RARITY_DATA, rarityData);
 			}
