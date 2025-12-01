@@ -12,9 +12,13 @@ A fully-featured Minecraft 1.21.10 Fabric mod that transforms equipment with dyn
 
 ### 🎲 Dynamic Item Rarity System
 - Every weapon, tool, and armor piece is automatically assigned a **random rarity tier**
-- Five default tiers: Common, Uncommon, Rare, Epic, and Legendary
-- Each rarity has a unique color and appearance probability
-- Items display their rarity with **colored names** both in inventories and tooltips
+- **12 unique rarity tiers**: Trash, Common, Uncommon, Rare, Epic, Legendary, Mythic, Ancient, Celestial, Divine, Transcendent, and Owner
+- Each rarity has:
+  - Unique color for item names
+  - Custom description
+  - Separate drop rates for crafting, mob drops, and loot
+  - Scaling modifier counts and strengths
+- Items display their rarity with **colored names** in inventories and detailed tooltips
 
 ### 📊 Random Buffs & Debuffs
 - Items gain **stat modifiers** when crafted or discovered
@@ -28,21 +32,27 @@ A fully-featured Minecraft 1.21.10 Fabric mod that transforms equipment with dyn
   - ⚓ Knockback Resistance
   - 👟 Movement Speed
   - 🍀 Luck
-- Modifiers can be positive (buffs) or negative (debuffs)
-- Values range from -20% to +30%
+- Modifiers scale with rarity (0.3x to 5.0x multiplier)
+- Values range from -20% to +30% (base) with rarity multipliers
+- Color-coded: green for buffs, red for debuffs
 
-### 🎒 Universal Loot Integration
-Rarity and effects apply seamlessly to:
-- ✅ **Crafted items** - Gain rarity when you craft them
-- ✅ **Chest loot** - Found items have random properties
-- ✅ **Mob drops** - Enemy equipment has unique stats
-- ✅ **Trading** - Villager trades produce varied items
+### 🎒 Smart Drop System
+- **Three independent drop rate systems:**
+  - **Crafting**: When you craft items at crafting tables
+  - **Mob Drops**: When enemies are killed
+  - **Loot Chests**: Found in structures and containers
+- Higher rarities more accessible through exploration vs crafting
+- Configurable weights for each source type
 
 ### 🔧 Fully Data-Driven
-- Rarities are defined in **JSON configuration files**
-- Easy to customize colors, weights, and modifier ranges
+- Rarities defined in **JSON configuration** with schema validation
+- Schema: `https://mosberg.github.io/src/schemas/rarities.schema.json`
+- Easy to customize:
+  - Colors and descriptions
+  - Drop rates per source
+  - Asset references for icons and frames
+  - Modifier scaling
 - No code changes needed to add new rarities
-- Hot-reloadable configuration
 
 ### 💾 Persistent Properties
 - Item properties stored using Minecraft 1.21's **Data Component system**
@@ -51,13 +61,17 @@ Rarity and effects apply seamlessly to:
   - Dropped on the ground
   - Traded with players or villagers
   - Stored in chests or shulker boxes
+- Fully networked between client and server
 - Compatible with vanilla item mechanics
 
 ### 🎨 Visual Feedback
 - **Colored item names** based on rarity
-- **Detailed tooltips** showing all modifiers
+- **Detailed tooltips** with:
+  - Rarity tier name and description
+  - All stat modifiers with icons
+  - Asset information (in advanced mode)
 - **Icon indicators** for each stat type
-- Color-coded positive (green) and negative (red) modifiers
+- Special formatting for ultra-rare tiers
 
 ## 📦 Installation
 
@@ -74,6 +88,27 @@ Rarity and effects apply seamlessly to:
 
 4. **Launch Minecraft** with the Fabric profile
 
+## 🎯 Rarity Tiers
+
+For detailed information about all 12 rarity tiers, see **[RARITIES.md](RARITIES.md)**
+
+### Quick Overview
+
+| Tier | Color | Crafting % | Modifiers | Multiplier |
+|------|-------|------------|-----------|------------|
+| 🗑️ Trash | Brown | 0.1% | 0-1 | 0.3x |
+| ⚪ Common | Gray | 60.0% | 1-2 | 0.5x |
+| 🟢 Uncommon | Green | 20.0% | 2-3 | 0.7x |
+| 🔵 Rare | Blue | 10.0% | 3-4 | 1.0x |
+| 🟣 Epic | Purple | 5.0% | 4-5 | 1.3x |
+| 🟠 Legendary | Orange | 2.0% | 5-6 | 1.6x |
+| 🔴 Mythic | Red | 1.0% | 6-7 | 2.0x |
+| 💧 Ancient | Cyan | 0.7% | 7-8 | 2.5x |
+| 💗 Celestial | Pink | 0.5% | 8-9 | 3.0x |
+| 🌟 Divine | Gold | 0.3% | 9-10 | 3.5x |
+| ⬛ Transcendent | Black | 0.1% | 10-11 | 4.0x |
+| 👑 Owner | Transparent | 0.0% | 10-12 | 5.0x |
+
 ## ⚙️ Configuration
 
 The mod creates a configuration file at:
@@ -81,69 +116,46 @@ The mod creates a configuration file at:
 config/rarity-and-relics/rarities.json
 ```
 
-### Default Configuration
+### Configuration Format
 
 ```json
 {
-  "rarities": {
-    "common": {
-      "display_name": "Common",
-      "color": "#AAAAAA",
-      "weight": 50.0,
-      "min_modifiers": 0,
-      "max_modifiers": 1
-    },
-    "uncommon": {
-      "display_name": "Uncommon",
-      "color": "#55FF55",
-      "weight": 30.0,
-      "min_modifiers": 1,
-      "max_modifiers": 2
-    },
-    "rare": {
-      "display_name": "Rare",
-      "color": "#5555FF",
-      "weight": 15.0,
-      "min_modifiers": 2,
-      "max_modifiers": 3
-    },
-    "epic": {
-      "display_name": "Epic",
-      "color": "#AA00AA",
-      "weight": 4.0,
-      "min_modifiers": 3,
-      "max_modifiers": 4
-    },
-    "legendary": {
-      "display_name": "Legendary",
-      "color": "#FFAA00",
-      "weight": 1.0,
-      "min_modifiers": 4,
-      "max_modifiers": 5
+  "$id": "https://mosberg.github.io/src/schemas/rarities.schema.json",
+  "rarities": [
+    {
+      "id": "legendary",
+      "name": "Legendary",
+      "color": "#FF9600",
+      "description": "Extremely rare, with legendary enhancements.",
+      "assets": {
+        "icon": "rarity:icons/legendary",
+        "frame": "rarity:frames/legendary"
+      },
+      "dropRates": {
+        "crafting": 2.0,
+        "drop": 2.0,
+        "loot": 2.0
+      }
     }
-  }
+  ]
 }
 ```
 
-### Customization Guide
+### Configuration Options
 
-**Adding a New Rarity:**
-```json
-"mythic": {
-  "display_name": "Mythic",
-  "color": "#FF00FF",
-  "weight": 0.1,
-  "min_modifiers": 5,
-  "max_modifiers": 7
-}
-```
+- `id`: Unique identifier (alphanumeric, dashes, underscores)
+- `name`: Display name shown to players
+- `color`: Hex color code (#RRGGBB format)
+- `description`: Flavor text describing the rarity
+- `assets.icon`: Resource path for rarity icon
+- `assets.frame`: Resource path for item frame decoration
+- `dropRates.crafting`: Weight for crafting table drops
+- `dropRates.drop`: Weight for mob kill drops
+- `dropRates.loot`: Weight for chest/structure loot
 
-**Configuration Options:**
-- `display_name`: Name shown to players
-- `color`: Hex color code for item names
-- `weight`: Relative probability (higher = more common)
-- `min_modifiers`: Minimum random stat bonuses
-- `max_modifiers`: Maximum random stat bonuses
+### Adding Custom Rarities
+
+See **[RARITIES.md](RARITIES.md)** for detailed customization guide.
 
 ## 🛠️ For Developers
 
@@ -157,80 +169,40 @@ cd rarity-and-relics
 
 The compiled JAR will be in `build/libs/`
 
-### Project Structure
+### Documentation
 
-```
-src/
-├── main/
-│   ├── java/com/mosberg/
-│   │   ├── RarityAndRelics.java          # Main mod entry point
-│   │   ├── component/                     # Data component system
-│   │   │   ├── ModDataComponents.java
-│   │   │   └── RarityData.java
-│   │   ├── rarity/                        # Rarity management
-│   │   │   ├── Rarity.java
-│   │   │   └── RarityManager.java
-│   │   ├── modifier/                      # Stat modifiers
-│   │   │   ├── ModifierType.java
-│   │   │   └── StatModifier.java
-│   │   ├── event/                         # Event handlers
-│   │   │   └── LootTableModifier.java
-│   │   └── mixin/                         # Core mixins
-│   │       ├── ItemStackMixin.java
-│   │       └── CraftingScreenHandlerMixin.java
-│   └── resources/
-│       ├── fabric.mod.json
-│       └── rarity-and-relics.mixins.json
-└── client/
-    ├── java/com/mosberg/
-    │   ├── RarityAndRelicsClient.java
-    │   ├── client/tooltip/
-    │   │   └── RarityTooltipHandler.java
-    │   └── mixin/client/
-    │       ├── ItemRendererMixin.java
-    │       └── ItemStackClientMixin.java
-    └── resources/
-        └── rarity-and-relics.client.mixins.json
-```
+- **[SETUP.md](SETUP.md)** - Development environment setup
+- **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** - Architecture and code organization
+- **[RARITIES.md](RARITIES.md)** - Complete rarity tier documentation
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history
 
-### Key Components
+### Key Technical Features
 
-**Data Components (1.21.10+):**
-- Replaces NBT system with typed, persistent data
-- `RarityData` record stores rarity ID and modifiers
-- Serialized with Codec for network sync
-
-**Rarity System:**
-- JSON-based configuration
-- Weighted random selection
-- Customizable modifier ranges
-
-**Mixins:**
-- `ItemStackMixin`: Applies rarity on item creation
-- `CraftingScreenHandlerMixin`: Applies rarity to crafted items
-- `ItemStackClientMixin`: Colors item names
-- `ItemRendererMixin`: Visual rendering hooks
+- **Data Components (1.21.10+)**: Modern persistent storage replacing NBT
+- **Schema Validation**: JSON config with formal schema
+- **Source-Aware Selection**: Different drop rates for crafting/drops/loot
+- **Mixin System**: Non-invasive integration
+- **Client/Server Split**: Proper code separation
+- **Weighted Randomization**: Fair distribution algorithm
 
 ## 🎯 Roadmap
 
-- [ ] Custom loot table integration for specific chests
+- [ ] Asset system implementation (icons and frames)
+- [ ] Actual stat application (currently cosmetic)
+- [ ] Custom loot table integration
 - [ ] Enchantment synergy bonuses
 - [ ] Set bonuses for matching rarity equipment
 - [ ] Rarity reroll items/mechanics
-- [ ] Visual particle effects for legendary items
+- [ ] Visual particle effects for high rarities
 - [ ] Sound effects on item discovery
 - [ ] Integration with popular mods (REI, EMI)
 - [ ] Data pack support for custom rarities
+- [ ] Owner tier special permissions system
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit pull requests.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
@@ -241,11 +213,13 @@ This project is licensed under the **CC0 1.0 Universal** license - see the [LICE
 - Built with [Fabric](https://fabricmc.net/)
 - Uses [Fabric API](https://github.com/FabricMC/fabric)
 - Minecraft by Mojang Studios
+- Schema design inspired by modern JSON standards
 
 ## 📞 Support
 
 If you encounter any issues or have questions:
 - Open an [Issue](https://github.com/Mosberg/rarity-and-relics/issues)
+- Read the documentation in this repository
 - Check existing issues for solutions
 
 ---
