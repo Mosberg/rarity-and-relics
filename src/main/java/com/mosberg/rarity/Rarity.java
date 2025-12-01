@@ -4,53 +4,107 @@ import com.google.gson.JsonObject;
 
 public class Rarity {
 	private final String id;
-	private final String displayName;
-	private final int color; // RGB color as integer
-	private final double weight; // Probability weight for random selection
-	private final int minModifiers;
-	private final int maxModifiers;
+	private final String name;
+	private final int color;
+	private final String description;
+	private final RarityAssets assets;
+	private final DropRates dropRates;
 
-	public Rarity(String id, String displayName, int color, double weight, int minModifiers, int maxModifiers) {
+	public Rarity(String id, String name, int color, String description, RarityAssets assets, DropRates dropRates) {
 		this.id = id;
-		this.displayName = displayName;
+		this.name = name;
 		this.color = color;
-		this.weight = weight;
-		this.minModifiers = minModifiers;
-		this.maxModifiers = maxModifiers;
+		this.description = description;
+		this.assets = assets;
+		this.dropRates = dropRates;
 	}
 
-	public static Rarity fromJson(String id, JsonObject json) {
-		String displayName = json.get("display_name").getAsString();
+	public static Rarity fromJson(JsonObject json) {
+		String id = json.get("id").getAsString();
+		String name = json.get("name").getAsString();
 		String colorHex = json.get("color").getAsString().replace("#", "");
 		int color = Integer.parseInt(colorHex, 16);
-		double weight = json.get("weight").getAsDouble();
-		int minModifiers = json.get("min_modifiers").getAsInt();
-		int maxModifiers = json.get("max_modifiers").getAsInt();
+		String description = json.get("description").getAsString();
 
-		return new Rarity(id, displayName, color, weight, minModifiers, maxModifiers);
+		JsonObject assetsJson = json.getAsJsonObject("assets");
+		RarityAssets assets = new RarityAssets(
+				assetsJson.get("icon").getAsString(),
+				assetsJson.get("frame").getAsString()
+		);
+
+		JsonObject dropRatesJson = json.getAsJsonObject("dropRates");
+		DropRates dropRates = new DropRates(
+				dropRatesJson.get("crafting").getAsDouble(),
+				dropRatesJson.get("drop").getAsDouble(),
+				dropRatesJson.get("loot").getAsDouble()
+		);
+
+		return new Rarity(id, name, color, description, assets, dropRates);
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getName() {
+		return name;
 	}
 
 	public int getColor() {
 		return color;
 	}
 
-	public double getWeight() {
-		return weight;
+	public String getDescription() {
+		return description;
 	}
 
-	public int getMinModifiers() {
-		return minModifiers;
+	public RarityAssets getAssets() {
+		return assets;
 	}
 
-	public int getMaxModifiers() {
-		return maxModifiers;
+	public DropRates getDropRates() {
+		return dropRates;
+	}
+
+	public static class RarityAssets {
+		private final String icon;
+		private final String frame;
+
+		public RarityAssets(String icon, String frame) {
+			this.icon = icon;
+			this.frame = frame;
+		}
+
+		public String getIcon() {
+			return icon;
+		}
+
+		public String getFrame() {
+			return frame;
+		}
+	}
+
+	public static class DropRates {
+		private final double crafting;
+		private final double drop;
+		private final double loot;
+
+		public DropRates(double crafting, double drop, double loot) {
+			this.crafting = crafting;
+			this.drop = drop;
+			this.loot = loot;
+		}
+
+		public double getCrafting() {
+			return crafting;
+		}
+
+		public double getDrop() {
+			return drop;
+		}
+
+		public double getLoot() {
+			return loot;
+		}
 	}
 }
